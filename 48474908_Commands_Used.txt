@@ -1,0 +1,94 @@
+    1  pip install fasttext
+    2  fasttext supervised -input train.txt -output model_rct
+    3  sudo apt-get update
+    4  sudo apt-get install -y build-essential cmake
+    5  git clone https://github.com/facebookresearch/fastText.git
+    6  cd fastText
+    7  make
+    8  echo 'export PATH=$PATH:/workspaces/fastText' >> ~/.bashrc
+    9  source ~/.bashrc
+   10  fasttext
+   11  fasttext supervised -input train.txt -output model_rct
+   12  ./fasttext supervised -input ../train.txt -output ../model_rct
+   13  sudo ln -s $(pwd)/fasttext /usr/local/bin/fasttext
+   14  ./fasttext test model_rct.bin test.txt
+   15  ./fasttext supervised -input train.txt -output model_imdb
+   16  ./fasttext supervised -input ../train.txt -output ../model_rct
+   17  ./fasttext test model_rct.bin test.txt
+   18  ./fasttext test ../model_rct.bin ../test.txt
+   19  echo "What procedures were used to coll
+ect the data in this study?" |  ./fasttext predict model_rct.bin -
+   20  echo "What is the current understanding or previous research on this topic?" |  ./fasttext predict model_rct.bin -
+   21  ./fasttext supervised -input train.txt -output model_rct -epoch 25 -lr 1.0 -wordNgrams 2
+   22  ./fasttext supervised -input ../train.txt -output ../model_rct -epoch 25 -lr 1.0 -wordNgrams 2
+   23  ./fasttext test ../model_rct.bin ../test.txt
+   24 echo "What is the current understanding or previous research on this topic?" |  ./fasttext predict model_rct.bin -
+   25  python -c "for preprocessing data"
+   26  import re
+
+# Open the original dataset
+with open("C:\\Users\\asola\\OneDrive\\Desktop\\data science\\dataset.txt", "r") as file:
+    lines = file.readlines()
+    
+# Initialize variables
+data = []
+current_abstract = []
+current_label = None
+
+# Process each line to extract labeled sections
+for line in lines:
+    if line.startswith("###"):  # New abstract identifier
+        # Save the current abstract if there is one
+        if current_abstract:
+            data.append(' '.join(current_abstract))
+            current_abstract = []  # Reset for new abstract
+        current_label = None  # Reset label for a new abstract
+    elif line.strip():  # Non-empty line
+        # Match labels like BACKGROUND, METHODS, etc.
+        match = re.match(r'^(BACKGROUND|OBJECTIVE|METHODS|RESULTS|CONCLUSIONS)\t', line)
+        if match:
+            # Set the label and start a new section
+            current_label = match.group(1).lower()
+            # Add the new line with the fastText label format
+            data.append(f"__label__{current_label} {line.strip().split('\t', 1)[-1]}")
+        elif current_label:
+            # Continue appending lines within the same section
+            data[-1] += ' '+ line.strip()
+
+# Save the preprocessed data in fastText format
+with open('C:\\Users\\asola\\OneDrive\\Desktop\\data science\\New_Dataset.txt', 'w') as output_file:
+    for entry in data:
+        output_file.write(entry + '\n')
+
+
+print("Data has been successfully formatted for fastText.")
+
+   32  python -c " spliting data
+   33  
+
+import random
+
+# Load the cleaned dataset
+with open("C:\\Users\\asola\\OneDrive\\Desktop\\data science\\New_Dataset.txt", "r") as file:
+    lines = file.readlines()
+
+# Shuffle the dataset to ensure randomness
+random.seed(42)  # Set a seed for reproducibility
+random.shuffle(lines)
+
+# Define the split ratio
+split_index = int(0.8 * len(lines))
+
+# Split the data
+train_lines = lines[:split_index]
+test_lines = lines[split_index:]
+
+# Save the train and test sets
+with open("C:\\Users\\asola\\OneDrive\\Desktop\\data science\\train.txt", "w") as train_file:
+    train_file.writelines(train_lines)
+
+with open("C:\\Users\\asola\\OneDrive\\Desktop\\data science\\test.txt", "w") as test_file:
+    test_file.writelines(test_lines)
+
+print("Dataset has been successfully split into 'train.txt' and 'test.txt'.")
+
